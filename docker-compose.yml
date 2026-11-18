@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: lifelane-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lifelane}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lifelane_secret_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-lifelanedb}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lifelane -d lifelanedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: lifelane-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: lifelane-mqtt
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./infra/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lifelane-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lifelane:lifelane_secret_2026@db:5432/lifelanedb
+      REDIS_URL: redis://redis:6379/0
+      MQTT_BROKER_HOST: mqtt
+      MQTT_BROKER_PORT: 1883
+      JWT_SECRET: ${JWT_SECRET:-lifelane_jwt_secret_dev_key_2026}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lifelane-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_WS_URL=ws://localhost:8000
+      - VITE_MAP_API_KEY=${VITE_MAP_API_KEY}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  mobile-web:
+    build:
+      context: ./mobile-web
+      dockerfile: Dockerfile
+    container_name: lifelane-mobile
+    restart: unless-stopped
+    ports:
+      - "5174:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_WS_URL=ws://localhost:8000
+      - VITE_MAP_API_KEY=${VITE_MAP_API_KEY}
+    volumes:
+      - ./mobile-web:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  redis_data:

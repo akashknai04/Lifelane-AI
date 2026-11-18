@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5173/",
+  "totalImages": 0,
+  "totalButtons": 25,
+  "totalLinks": 38,
+  "totalInputs": 0,
+  "brokenAnchors": [],
+  "issuesCount": 0,
+  "issues": [],
+  "status": "PASS_WCAG_AA",
+  "auditTimestamp": "2026-10-16T15:30:00Z",
+  "standards": [
+    "WCAG 2.1 AA",
+    "Section 508"
+  ]
+}

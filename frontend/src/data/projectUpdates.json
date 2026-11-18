@@ -1,0 +1,32 @@
+[
+  {
+    "phase": "Phase 08 · Edge Intelligence Daemon & Hardening",
+    "date": "Oct 16, 2026",
+    "title": "Edge Intelligence Daemon & Hardening (MQTT & Offline Continuity)",
+    "summary": "Implement embedded edge controller daemon with autonomous local perception preemption, resilient MQTT pub/sub, and fail-safe offline fallback.",
+    "badge": "Planned",
+    "deliverables": [
+      "Phase 8 Core Specs"
+    ]
+  },
+  {
+    "phase": "Phase 07 · Multi-Agent Digital Twin & Evaluation Benchmark Engine",
+    "date": "Oct 16, 2026",
+    "title": "Multi-Agent Digital Twin & Evaluation Benchmark Engine",
+    "summary": "Quantitative benchmark engine evaluating emergency corridors against standard unassisted transit across 4 canonical presentation scenarios.",
+    "badge": "Planned",
+    "deliverables": [
+      "Phase 7 Core Specs"
+    ]
+  },
+  {
+    "phase": "Phase 06 · Municipal Traffic Police Control Dashboard",
+    "date": "Oct 16, 2026",
+    "title": "Municipal Traffic Police Control Dashboard",
+    "summary": "Build a full-screen command and control console for Bengaluru Traffic Police operators.",
+    "badge": "Planned",
+    "deliverables": [
+      "Phase 6 Core Specs"
+    ]
+  }
+]
